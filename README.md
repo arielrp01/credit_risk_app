@@ -33,8 +33,8 @@ install.packages(c("shiny", "ggplot2", "bslib"))
 
 `loan_agg.csv` contains one row per loan with engineered features derived from two raw Home Credit files:
 
-- `application_train.csv` — static loan and applicant characteristics
-- `installments_payments.csv` — payment-level history
+- `application_train.csv`: Static loan and applicant characteristics
+- `installments_payments.csv`: Payment-level history
 
 The aggregation was performed in Python. Raw files are available at [kaggle.com/c/home-credit-default-risk](https://www.kaggle.com/c/home-credit-default-risk).
 
