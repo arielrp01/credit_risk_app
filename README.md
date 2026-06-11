@@ -12,7 +12,7 @@ View app at https://arielrp.shinyapps.io/project/
 credit_risk_app/
 ├── ui.R            # App layout, styling, and input widgets
 ├── server.R        # Model training, reactive logic, and plot outputs
-├── loan_agg.csv    # Preprocessed dataset (291,643 loans, 13 features)
+├── loan_agg.csv.zip    # Preprocessed dataset (291,643 loans, 13 features)
 └── README.md
 ```
 
