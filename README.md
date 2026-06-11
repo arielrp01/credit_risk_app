@@ -2,7 +2,7 @@
 
 An interactive Shiny app for predicting loan default risk, built on the [Home Credit Default Risk](https://www.kaggle.com/c/home-credit-default-risk) dataset.
 
-View app at https://arielrp.shinyapps.io/project/.
+View app at https://arielrp.shinyapps.io/project/
 
 ---
 
@@ -18,17 +18,6 @@ credit_risk_app/
 
 ---
 
-## Requirements
-
-- R 4.0 or higher
-- The following packages:
-
-```r
-install.packages(c("shiny", "ggplot2", "bslib"))
-```
-
----
-
 ## Data
 
 `loan_agg.csv` contains one row per loan with engineered features derived from two raw Home Credit files:
@@ -40,10 +29,14 @@ The aggregation was performed in Python. Raw files are available at [kaggle.com/
 
 ---
 
-## Background
+## Requirements
 
-This app was developed as an extension of a machine learning project completed for UC Berkeley COMPSCI X433.6. The original project compared a logistic regression baseline against an LSTM-based sequence model for credit default prediction. This app brings the logistic regression component to life as an interactive tool.
+- R 4.0 or higher
+- The following packages:
 
+```r
+install.packages(c("shiny", "ggplot2", "bslib"))
+```
 ---
 
 ## Built with
