@@ -38,7 +38,7 @@ As an alternative, this presentation was built using R Markdown ioslides, which 
 
 ### GitHub Pages
 
-The rubric also requires deployment from a `gh-pages` branch with a `.nojekyll` file, which reflects an earlier GitHub Pages workflow. Both requirements have been followed here, though GitHub now supports deploying directly from `main`
+The rubric also requires deployment from a `gh-pages` branch with a `.nojekyll` file, which reflects an earlier GitHub Pages workflow. Both requirements have been followed here, though GitHub now supports deploying directly from `main`.
 
 ---
 
