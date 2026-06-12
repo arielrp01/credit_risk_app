@@ -2,7 +2,7 @@
 
 A Shiny app for predicting loan default risk, built on the [Home Credit Default Risk](https://www.kaggle.com/c/home-credit-default-risk) dataset.
 
-View app at https://arielrp.shinyapps.io/project/
+App available at https://arielrp.shinyapps.io/project/
 
 ---
 
@@ -23,7 +23,7 @@ credit_risk_app/
 
 ## Data
 
-`loan_agg.csv` contains one row per loan with engineered features derived from two raw Home Credit files:
+`loan_agg.csv.zip` contains a CSV file with one row per loan with engineered features derived from two raw Home Credit files:
 
 - `application_train.csv`: Static loan and applicant characteristics
 - `installments_payments.csv`: Payment-level history
