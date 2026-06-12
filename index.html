@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Credit Default Risk App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #ffffff;
+      --surface:  #f8f9fb;
+      --border:   #e2e6ea;
+      --text:     #1e293b;
+      --muted:    #64748b;
+      --accent:   #2563eb;
+      --accent-l: #eff6ff;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* ── Eyebrow ── */
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    /* ── Title ── */
+    .title {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .title::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), #818cf8, var(--accent));
+      background-size: 200% 100%;
+      animation: shimmer 3s ease infinite;
+      border-radius: 2px;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0% 0%; }
+      50%  { background-position: 100% 0%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    /* ── Tagline ── */
+    .tagline {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-top: 20px;
+      margin-bottom: 36px;
+      max-width: 380px;
+    }
+
+    /* ── Stats row ── */
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 36px;
+      width: 100%;
+    }
+
+    .stat {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 8px;
+    }
+
+    .stat-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-top: 5px;
+    }
+
+    /* ── Buttons ── */
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 22px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: border-color 0.18s, box-shadow 0.18s, transform 0.12s;
+      text-align: left;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--accent-l);
+    }
+
+    .btn-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-primary .btn-icon {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .btn-primary .btn-icon svg {
+      stroke: #ffffff;
+    }
+
+    .btn-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .btn-label {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .btn-sub {
+      font-size: 12px;
+      opacity: 0.65;
+      font-weight: 400;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 44px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+
+    @media (max-width: 480px) {
+      .stats { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .title::after { animation: none; }
+      .btn { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+
+      <p class="eyebrow">Data Science Project</p>
+
+      <h1 class="title">Credit Default Risk App</h1>
+
+      <p class="tagline">
+        A Shiny app that predicts loan default probability using logistic regression trained on 291,643 loan records.
+      </p>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-num">291k+</span>
+          <span class="stat-lbl">Loan Records</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">0.605</span>
+          <span class="stat-lbl">Test AUC</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">8.2%</span>
+          <span class="stat-lbl">Default Rate</span>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="links">
+
+        <!-- Live App -->
+        <a class="btn btn-primary" href="https://arielrp.shinyapps.io/project/" target="_blank">
+          <div class="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="#ffffff">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <div class="btn-text">
+            <span class="btn-label">Live App</span>
+            <span class="btn-sub">arielrp.shinyapps.io/project</span>
+          </div>
+        </a>
+
+        <!-- GitHub -->
+        <a class="btn" href="https://github.com/arielrp01/credit_risk_app" target="_blank">
+          <div class="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#2563eb">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </div>
+          <div class="btn-text">
+            <span class="btn-label">Source Code</span>
+            <span class="btn-sub">github.com/arielrp01/credit_risk_app</span>
+          </div>
+        </a>
+
+        <!-- Presentation -->
+        <a class="btn" href="https://arielrp01.github.io/credit_risk_app/credit_risk_presentation.html" target="_blank">
+          <div class="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="#2563eb">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M8 21h8M12 17v4"/>
+              <path d="M7 8l3 3 4-4"/>
+            </svg>
+          </div>
+          <div class="btn-text">
+            <span class="btn-label">Presentation</span>
+            <span class="btn-sub">arielrp01.github.io/credit_risk_app</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <p class="footer">
+        Built with R &amp; Shiny &nbsp;&middot;&nbsp;
+        <a href="https://www.kaggle.com/c/home-credit-default-risk" target="_blank">Home Credit Default Risk Dataset</a>
+      </p>
+
+    </div>
+  </div>
+</body>
+</html>
