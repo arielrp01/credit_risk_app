@@ -29,12 +29,16 @@ credit_risk_app/
 The aggregation was performed in Python. Raw files are available at [kaggle.com/c/home-credit-default-risk](https://www.kaggle.com/c/home-credit-default-risk).
 
 ---
-
-## Presentation Tooling 
+## Notes
+### Presentation Tooling 
 
 Originally, the project rubric specified Slidify or RStudio Presenter for the presentation. **Both tools are no longer actively maintained and have known compatibility issues with current versions of R**. As noted by other students in the [JHU course forum](https://www.coursera.org/learn/data-products/discussions/forums/6a3-LF8IEea5lw7yUOQN9w/threads/03qjLBPqEfCAEAr_9gQbYQ), the course no longer teaches either tool. 
 
 As an alternative, this presentation was built using R Markdown ioslides, which is the currently supported equivalent. It renders the same HTML format and is hosted on GitHub Pages per the deployment requirements.
+
+### GitHub Pages
+
+The rubric also requires deployment from a `gh-pages` branch with a `.nojekyll` file, which reflects an earlier GitHub Pages workflow. Both requirements have been followed here, though GitHub now supports deploying directly from `main`
 
 ---
 
