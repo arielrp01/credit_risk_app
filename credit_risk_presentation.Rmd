@@ -1,0 +1,355 @@
+---
+title: "Credit Default Risk App"
+subtitle: "A Shiny App for Loan Default Prediction"
+author: "A. Richmond-Parks"
+date: "June 11, 2026"
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(ggplot2)
+library(htmltools)
+
+stat_box <- function(num, lbl) {
+  tags$div(class = "stat-box",
+    tags$span(class = "stat-num", num),
+    tags$span(class = "stat-lbl", lbl)
+  )
+}
+
+stat_col <- function(...) {
+  tags$div(class = "stat-row",
+    style = "flex-direction:column; gap:12px;",
+    ...
+  )
+}
+```
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+body, slides > slide {
+  font-family: 'Inter', sans-serif !important;
+  background: #f8f9fb !important;
+  color: #334155 !important;
+}
+
+slides > slide.title-slide { background: #ffffff !important; }
+
+slides > slide.title-slide hgroup h1 {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 52px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.15 !important;
+}
+slides > slide.title-slide hgroup h2 {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  color: #94a3b8 !important;
+  margin-top: 8px !important;
+}
+slides > slide.title-slide p {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 15px !important;
+  color: #64748b !important;
+  line-height: 1.9 !important;
+}
+
+slides > slide:not(.title-slide) hgroup h2 {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  border-bottom: 2px solid #2563eb !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 20px !important;
+  letter-spacing: -0.01em !important;
+}
+
+slides > slide:not(.title-slide) p,
+slides > slide:not(.title-slide) li {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.75 !important;
+  color: #334155 !important;
+}
+
+slides > slide ul { margin-top: 4px !important; }
+strong { color: #1e293b !important; font-weight: 600 !important; }
+
+.stat-row { display:flex; gap:16px; margin:8px 0; }
+.stat-box {
+  background:#ffffff; border:1px solid #e2e6ea;
+  border-radius:8px; padding:14px 18px; flex:1;
+  box-shadow:0 1px 3px rgba(0,0,0,0.05);
+}
+.stat-num {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:34px; font-weight:700;
+  color:#2563eb; line-height:1; display:block;
+}
+.stat-lbl {
+  font-size:11px; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:#64748b; margin-top:5px; display:block;
+}
+
+.highlight-box {
+  background:#eff6ff; border-left:4px solid #2563eb;
+  border-radius:0 6px 6px 0; padding:12px 16px;
+  margin:14px 0; font-size:15px !important;
+  color:#1e40af !important; line-height:1.6;
+}
+
+table { width:100%; border-collapse:collapse; font-size:16px; margin:10px 0; border-bottom: none !important; }
+slides > slide table,
+slides > slide table tbody {
+  border-bottom: none !important;
+}
+slides > slide table td,
+slides > slide table th {
+  font-size: 13px !important;
+}
+slides > slide table tr:last-child td {
+  border-bottom: none !important;
+}
+th {
+  background:#1e293b !important; color:#ffffff !important;
+  padding:7px 10px !important; font-size:11px !important;
+  text-transform:uppercase; letter-spacing:0.05em; font-weight:600 !important;
+}
+td {
+  padding:7px 10px !important;
+  border-bottom:1px solid #e2e6ea !important;
+  color:#334155 !important;
+}
+tr:nth-child(even) td { background:#f8f9fb !important; }
+
+.tag {
+  display:inline-block; background:#eff6ff; color:#2563eb;
+  border:1px solid #bfdbfe; border-radius:4px;
+  font-size:11px; font-weight:500; padding:2px 7px;
+  margin:2px 2px; font-family:'IBM Plex Mono',monospace;
+}
+
+.col-left  { float:left;  width:50%; padding-right:20px; box-sizing:border-box; }
+.col-right { float:right; width:48%; box-sizing:border-box; }
+.clearfix::after { content:""; display:table; clear:both; }
+
+/* Code block alignment and size */
+slides > slide pre {
+  font-size: 0.58em !important;
+  line-height: 1.4 !important;
+  max-height: 420px !important;
+  overflow: hidden !important;
+  margin: 10px 0 0 0 !important;
+  padding: 12px 16px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+slides > slide pre code {
+  font-size: 1em !important;
+}
+
+/* Align slide content with title */
+slides > slide {
+  padding-left: 56px !important;
+  padding-right: 56px !important;
+}
+</style>
+
+## The Problem
+
+<div class="col-left">
+
+When a borrower fails to repay a loan, the lender absorbs the full loss. At scale, even a small improvement in identifying high-risk applicants translates to significant savings.
+
+Most borrowers repay, but the rare defaulters are exactly who lenders need to identify. A model that flags everyone as low risk achieves over 90% accuracy while catching zero defaulters.
+
+<div class="highlight-box">
+The real question is not <b>'Is this model accurate?'</b> but rather <b>'Does it catch the defaulters that matter, without rejecting too many creditworthy borrowers?'</b>
+</div>
+
+</div>
+
+<div class="col-right">
+```{r prob-stats}
+stat_col(
+  stat_box("8.2%",  "Default rate in dataset"),
+  stat_box("91.8%", "Accuracy of a model that never flags anyone"),
+  stat_box("0%",    "Recall of that same model")
+)
+```
+</div>
+
+<div class="clearfix"></div>
+
+## The Data & Model
+
+<div class="col-left">
+
+**Dataset:** 291,643 real loan records from Home Credit, a consumer finance company. Originally released as a Kaggle competition.
+
+**Features:** Derived from each loan's payment history.
+
+<span class="tag">Fraction Late</span>
+<span class="tag">Mean Days Late</span>
+<span class="tag">Max Days Late</span>
+<span class="tag">Pay Ratio</span>
+<span class="tag">Fraction On Time</span>
+<span class="tag">Log Instalment</span>
+<span class="tag">Log Payment</span>
+<span class="tag">Loan Amount</span>
+<span class="tag">Annual Income</span>
+
+**Model:** Logistic regression - Interpretable, auditable, and consistent with real-world credit scoring practice where regulatory scrutiny favors explainable models.
+
+</div>
+
+<div class="col-right">
+```{r model-stats}
+stat_col(
+  stat_box("0.605", "AUC on held-out test set"),
+  stat_box("70/30", "Train / test split"),
+  stat_box("0.10",  "Default decision threshold")
+)
+```
+</div>
+
+<div class="clearfix"></div>
+
+## The Data in R
+
+```{r feature-code, echo=TRUE, eval=FALSE}
+# Load data and label default status
+loan_data <- read.csv("loan_agg.csv")
+loan_data$default <- factor(loan_data$TARGET,
+                            labels = c("No Default", "Default"))
+
+# Plot feature distribution by default status
+ggplot(loan_data, aes(x = frac_late, fill = default)) +
+  geom_density(alpha = 0.65) +
+  coord_cartesian(
+    xlim = c(quantile(loan_data$frac_late, 0.01),
+             quantile(loan_data$frac_late, 0.99))
+  ) +
+  scale_fill_manual(
+    values = c("No Default" = "#16a34a", "Default" = "#dc2626"),
+    name = NULL
+  ) +
+  labs(x = "Fraction of Late Payments", y = "Density") +
+  theme_minimal()
+```
+
+## Feature Distribution by Default Status
+
+```{r feature-dist, echo=FALSE, fig.width=10, fig.height=4, fig.align='center'}
+loan_data <- read.csv("loan_agg.csv")
+loan_data$default <- factor(loan_data$TARGET,
+                            labels = c("No Default", "Default"))
+
+ggplot(loan_data, aes(x = frac_late, fill = default)) +
+  geom_density(alpha = 0.65) +
+  coord_cartesian(
+    xlim = c(quantile(loan_data$frac_late, 0.01),
+             quantile(loan_data$frac_late, 0.99))
+  ) +
+  scale_fill_manual(
+    values = c("No Default" = "#16a34a", "Default" = "#dc2626"),
+    name = NULL
+  ) +
+  labs(
+    x = "Fraction of Late Payments",
+    y = "Density",
+    caption = "Defaulters (red) show a markedly higher fraction of late payments than non-defaulters (green)."
+  ) +
+  theme_minimal(base_family = "sans") +
+  theme(
+    plot.background  = element_rect(fill = "#ffffff", color = NA),
+    panel.background = element_rect(fill = "#ffffff", color = NA),
+    panel.grid.major = element_line(color = "#e2e6ea", linewidth = 0.4),
+    panel.grid.minor = element_blank(),
+    axis.text        = element_text(color = "#64748b", size = 10),
+    axis.title       = element_text(color = "#64748b", size = 11),
+    legend.text      = element_text(color = "#334155", size = 11),
+    legend.position  = "top",
+    plot.caption     = element_text(color = "#94a3b8", size = 9,
+                                    hjust = 0, margin = margin(t = 8))
+  )
+```
+
+This separation confirms that **fraction of late payments** is a meaningful signal and one of the strongest predictors in the model.
+
+## The App
+
+<div class="col-left">
+
+**Risk Assessment:**  Enter an applicant's details to get a default probability, risk verdict, and feature contribution chart.
+
+| Profile | Frac Late | Days Late | On Time | Result |
+|---|---|---|---|---|
+| Low Risk | 0.0 | -20 | 1.0 | ~6% |
+| Borderline | 0.1 | 0 | 0.9 | ~7% |
+| High Risk | 0.8 | 60 | 0.1 | ~20% |
+
+**Decision Threshold Slider:**  Drag it to see recall, precision, and the confusion matrix update live without re-scoring.
+
+**ROC & Precision-Recall:**  Live curves with a moveable dot at the current threshold.
+
+**Data Explorer:**  Feature distributions by default status confirming the model learned real signals.
+
+</div>
+
+<div class="col-right">
+
+<p style="font-size:18px; font-weight:700; color:#1e293b; margin-bottom:16px;">Try It Now</p>
+
+<div class="highlight-box">
+<p style="margin:0 0 10px 0;">
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>&nbsp;
+<strong>Live App</strong><br/>
+<a href="https://arielrp.shinyapps.io/project/" target="_blank">arielrp.shinyapps.io/project</a>
+</p>
+<p style="margin:0;">
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#1e293b" style="vertical-align:middle;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>&nbsp;
+<strong>Source Code</strong><br/>
+<a href="https://github.com/arielrp01/credit_risk_app" target="_blank">github.com/arielrp01/credit_risk_app</a>
+</p>
+</div>
+
+</div>
+
+<div class="clearfix"></div>
+
+## What's Next
+
+<div class="col-left">
+
+**Current limitations**
+
+- AUC of 0.605 reflects a small feature subset. Full feature models reach ~0.78-0.80.
+- No fairness audit performed. Fair lending law requires group-level disparity analysis before any real deployment.
+- Static model with no retraining pipeline or drift monitoring.
+
+
+</div>
+
+<div class="col-right">
+
+**Next steps**
+
+- Full feature set from all Home Credit data sources.
+- Champion / challenger model comparison framework.
+- Automated retraining and performance monitoring.
+- Fairness audit across protected characteristics.
+
+</div>
+
+<div class="clearfix"></div>
