@@ -1,8 +1,6 @@
 # Credit Default Risk App
 
-A Shiny app for predicting loan default risk, built on the [Home Credit Default Risk](https://www.kaggle.com/c/home-credit-default-risk) dataset.
-
-App available at https://arielrp.shinyapps.io/project/
+A Shiny app for predicting loan default risk, built on the [Home Credit Default Risk](https://www.kaggle.com/c/home-credit-default-risk) dataset and available online via [Shinyapps.io](https://arielrp.shinyapps.io/project/).
 
 ---
 
@@ -14,7 +12,7 @@ credit_risk_app/
 ├── ui.R                            # App layout, styling, and input widgets
 ├── server.R                        # Model training, reactive logic, and plot outputs
 ├── loan_agg.csv.zip                # Preprocessed dataset (291,643 loans, 13 features)
-├── credit_risk_presentation.html   # Rendered slide deck
+├── credit_risk_presentation.html   # Rendered slide deck (GitHub Pages)
 ├── credit_risk_presentation.Rmd    # Slide deck source with embedded R code
 └── README.md
 ```
